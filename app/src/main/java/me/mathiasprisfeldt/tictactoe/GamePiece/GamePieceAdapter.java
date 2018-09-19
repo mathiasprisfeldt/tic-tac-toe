@@ -3,10 +3,12 @@ package me.mathiasprisfeldt.tictactoe.GamePiece;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 
 import me.mathiasprisfeldt.tictactoe.Extensions.ArrayExtensions;
 import me.mathiasprisfeldt.tictactoe.R;
@@ -33,6 +35,13 @@ public class GamePieceAdapter extends ArrayAdapter<GamePiece> {
                     false
             );
         }
+
+        if (gamePiece == null) {
+            Log.w("GamePieceAdapter", "Game Piece was NULL, it shouldn't be.");
+            return convertView;
+        }
+
+        gamePiece.UpdateBtn((ImageButton) convertView.findViewById(R.id.game_piece_btn));
 
         return convertView;
     }

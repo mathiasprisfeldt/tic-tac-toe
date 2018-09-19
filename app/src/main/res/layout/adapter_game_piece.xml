@@ -4,9 +4,11 @@
     android:layout_height="match_parent">
 
     <ImageButton
+        android:id="@+id/game_piece_btn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/ic_launcher_background"
-        android:contentDescription="Game Piece Image" />
+        android:contentDescription="@string/game_piece_btn_description"
+        android:background="#000000FF"/>
 
 </LinearLayout>
