@@ -38,15 +38,18 @@
 
     <GridView
         android:id="@+id/game_grid"
-        android:layout_width="0dp"
-        android:layout_height="394dp"
+        android:layout_width="wrap_content"
+        android:layout_height="400dp"
         android:numColumns="3"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="101dp"
+        android:gravity="center"
+        android:stretchMode="spacingWidthUniform"
+        android:columnWidth="90dp"
+        android:listSelector="#000000FF"
+        android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@id/game_status"
-        app:layout_constraintTop_toBottomOf="@id/game_restart"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/game_restart">
 
     </GridView>
 
