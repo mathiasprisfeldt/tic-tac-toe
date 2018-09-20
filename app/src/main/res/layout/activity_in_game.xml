@@ -8,64 +8,67 @@
 
     <Button
         android:id="@+id/game_goto_main_menu"
+        android:text="Main menu"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        android:text="Main menu"
-        app:layout_constraintBottom_toTopOf="@id/game_grid"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/game_grid"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/game_restart"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <Button
         android:id="@+id/game_restart"
+        android:text="Restart"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="4dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Restart"
-        app:layout_constraintBottom_toTopOf="@+id/game_grid"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/game_grid"
         app:layout_constraintEnd_toStartOf="@+id/game_goto_main_menu"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <GridView
+        android:background="@drawable/ic_game_board"
         android:id="@+id/game_grid"
         android:layout_width="wrap_content"
-        android:layout_height="400dp"
+        android:layout_height="wrap_content"
         android:numColumns="3"
-        android:gravity="center"
-        android:stretchMode="spacingWidthUniform"
+        android:stretchMode="spacingWidth"
         android:columnWidth="90dp"
         android:listSelector="#000000FF"
         android:scrollbars="none"
-        app:layout_constraintBottom_toTopOf="@id/game_status"
+        android:verticalSpacing="25dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/game_restart">
-
+        app:layout_constraintTop_toTopOf="parent">
     </GridView>
 
     <TextView
         android:id="@+id/game_status"
+        android:text="[Status]"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:text="[Status]"
         android:textSize="25sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/game_grid" />
+        app:layout_constraintBottom_toTopOf="@id/game_grid" />
 
 </android.support.constraint.ConstraintLayout>

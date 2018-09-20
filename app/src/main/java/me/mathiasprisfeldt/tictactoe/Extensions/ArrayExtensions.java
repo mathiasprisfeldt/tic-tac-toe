@@ -8,8 +8,8 @@ public class ArrayExtensions {
             T[] column = array[columnIndex];
 
             for (int rowIndex = 0; rowIndex < column.length; rowIndex++) {
-                T row = column[rowIndex];
-                flatArray[columnIndex + rowIndex] = row;
+                T entry = column[rowIndex];
+                flatArray[(columnIndex * column.length) + rowIndex] = entry;
             }
         }
 

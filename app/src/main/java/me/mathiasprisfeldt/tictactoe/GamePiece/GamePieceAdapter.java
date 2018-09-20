@@ -1,5 +1,6 @@
 package me.mathiasprisfeldt.tictactoe.GamePiece;
 
+
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,7 +13,6 @@ import android.widget.ImageButton;
 
 import me.mathiasprisfeldt.tictactoe.Extensions.ArrayExtensions;
 import me.mathiasprisfeldt.tictactoe.R;
-
 public class GamePieceAdapter extends ArrayAdapter<GamePiece> {
 
     private final Context _context;
@@ -25,7 +25,6 @@ public class GamePieceAdapter extends ArrayAdapter<GamePiece> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
         GamePiece gamePiece = getItem(position);
 
         if (convertView == null) {
@@ -34,6 +33,7 @@ public class GamePieceAdapter extends ArrayAdapter<GamePiece> {
                     parent,
                     false
             );
+
         }
 
         if (gamePiece == null) {

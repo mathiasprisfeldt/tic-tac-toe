@@ -83,9 +83,9 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="height" value="110" />
-                            <entry key="outputName" value="ic_cross" />
+                            <entry key="outputName" value="ic_empty" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\MP-L\Desktop\cross.svg" />
+                            <entry key="sourceFile" value="C:\Users\MP-L\Desktop\empty.svg" />
                             <entry key="width" value="110" />
                           </map>
                         </option>
