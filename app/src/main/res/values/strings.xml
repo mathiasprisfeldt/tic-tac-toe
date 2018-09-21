@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">TicTacToe</string>
     <string name="game_piece_btn_description">Game Piece Image</string>
+    <string name="game_piece_circle">Circle</string>
+    <string name="game_piece_cross">Cross</string>
+    <string name="player_1">Red</string>
+    <string name="player_2">Blue</string>
+    <string name="player_ai">AI</string>
+    <string name="game_status_action_place">Place</string>
+    <string name="game_status_action_remove">Remove</string>
+    <string name="game_status_winning">%1$s WON!</string>
 </resources>

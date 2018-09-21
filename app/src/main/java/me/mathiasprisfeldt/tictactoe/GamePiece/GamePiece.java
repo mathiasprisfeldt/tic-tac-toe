@@ -4,17 +4,28 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import me.mathiasprisfeldt.tictactoe.InGame;
+import me.mathiasprisfeldt.tictactoe.Player;
 import me.mathiasprisfeldt.tictactoe.R;
 
 public class GamePiece {
 
+    private int _index;
     private InGame _context;
     private boolean _isInitialized;
-    private GamePieceType _type;
+    private Player _owner;
     private ImageButton _imageBtn;
 
-    public GamePiece(InGame context) {
+    public int getIndex() {
+        return _index;
+    }
+
+    public Player getOwner() {
+        return _owner;
+    }
+
+    public GamePiece(InGame context, int index) {
         _context = context;
+        _index = index;
     }
 
     public void UpdateBtn(ImageButton imageBtn) {
@@ -30,28 +41,24 @@ public class GamePiece {
     private final View.OnClickListener OnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            SetOwner(_context.GetCurrentPlayer());
-            _context.EndTurn();
+            _context.GetCurrentPlayer().SetPiece(GamePiece.this);
         }
     };
 
-    private void SetOwner(GamePieceType owner) {
-        _type = owner;
+    public void SetOwner(Player owner) {
+        _owner = owner;
 
-        switch (_type) {
-            case None:
-                _imageBtn.setImageResource(android.R.color.transparent);
-                break;
-            case Ply1:
-                _imageBtn.setImageResource(R.drawable.ic_circle);
-                break;
-            case Ply2:
-                _imageBtn.setImageResource(R.drawable.ic_cross);
-                break;
+        if (_imageBtn == null)
+            return;
+
+        if (_owner != null) {
+            _imageBtn.setImageResource(_owner.getPieceImage());
         }
+        else
+            _imageBtn.setImageResource(android.R.color.transparent);
     }
 
     public void Reset() {
-        SetOwner(GamePieceType.None);
+        SetOwner(null);
     }
 }

@@ -1,5 +1,9 @@
 package me.mathiasprisfeldt.tictactoe;
 
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -12,9 +16,18 @@ import me.mathiasprisfeldt.tictactoe.GamePiece.GamePieceType;
 
 public class InGame extends AppCompatActivity {
 
+    private GridView _grid;
     private TextView _statusText;
-    private GamePieceType _currentPlayer;
+
+    private Player _ply1;
+    private Player _ply2;
+    private Player _currentPlayer;
+
     private GamePiece[][] _gamePieces = new GamePiece[3][3];
+
+    public Player GetCurrentPlayer() {
+        return _currentPlayer;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +37,8 @@ public class InGame extends AppCompatActivity {
         InitializeGamePieces();
         GamePieceAdapter gamePieceAdapter = new GamePieceAdapter(this, _gamePieces);
 
-        GridView gw = findViewById(R.id.game_grid);
-        gw.setAdapter(gamePieceAdapter);
+        _grid = findViewById(R.id.game_grid);
+        _grid.setAdapter(gamePieceAdapter);
 
         findViewById(R.id.game_restart).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -34,15 +47,28 @@ public class InGame extends AppCompatActivity {
             }
         });
 
+        findViewById(R.id.game_goto_main_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(InGame.this, MainMenu.class));
+            }
+        });
+
         _statusText = findViewById(R.id.game_status);
 
-        SetPlayer(GamePieceType.Ply1);
+        if (_ply1 == null)
+            _ply1 = new Player(getString(R.string.player_1), this, GamePieceType.Cross);
+
+        if (_ply2 == null)
+            _ply2 = new Player(getString(R.string.player_2), this, GamePieceType.Circle);
+
+        ResetGame();
     }
 
     private void InitializeGamePieces() {
-        for (int x = 0; x < 3; x++) {
-            for (int y = 0; y < 3; y++) {
-                _gamePieces[x][y] = new GamePiece(this);
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 3; x++) {
+                _gamePieces[y][x] = new GamePiece(this, x + (y * 3));
             }
         }
     }
@@ -54,19 +80,70 @@ public class InGame extends AppCompatActivity {
             }
         }
 
-        SetPlayer(GamePieceType.Ply1);
+        _ply1.Reset();
+        _ply2.Reset();
+
+        SetPlayer(_ply1);
+
+        _grid.setBackgroundResource(R.drawable.ic_game_board);
     }
 
-    private void SetPlayer(GamePieceType ply) {
+    private void SetPlayer(Player ply) {
         _currentPlayer = ply;
-        _statusText.setText(ply == GamePieceType.Ply1 ? "Player 1" : "Player 2");
+
+
+        String plyName = ply.toString();
+
+        String action = ply.getPieceAmount() < 3 ?
+                getString(R.string.game_status_action_place) :
+                getString(R.string.game_status_action_remove);
+
+        String piece = ply.getPieceType() == GamePieceType.Circle ?
+                getString(R.string.game_piece_circle) :
+                getString(R.string.game_piece_cross);
+
+        _statusText.setText(String.format("%s - %s %s", plyName, action, piece));
+
     }
 
-    public void EndTurn() {
-        SetPlayer(_currentPlayer == GamePieceType.Ply1 ? GamePieceType.Ply2 : GamePieceType.Ply1);
+    public void EndTurn(boolean removedPiece) {
+        if (removedPiece)
+            SetPlayer(_currentPlayer);
+        else {
+            _grid.setBackgroundResource(_currentPlayer.getPieceType() == GamePieceType.Circle ?
+                    R.drawable.ic_game_board_circle :
+                    R.drawable.ic_game_board_cross);
+
+            if (CheckWinCon(_currentPlayer))
+                _statusText.setText(getString(R.string.game_status_winning, _currentPlayer.toString()));
+            else
+                SetPlayer(_currentPlayer == _ply1 ? _ply2 : _ply1);
+        }
     }
 
-    public GamePieceType GetCurrentPlayer() {
-        return _currentPlayer;
+    public boolean CheckWinCon(Player player) {
+        GamePiece lastPiece = null;
+        int lastDelta = -1;
+
+        for (int y = 0; y < _gamePieces.length; y++) {
+            for (int x = 0; x < 3; x++) {
+                GamePiece piece = _gamePieces[x][y];
+
+                if (piece.getOwner() == player) {
+                    int delta = -1;
+
+                    if (lastPiece != null)
+                        delta = Math.abs(lastPiece.getIndex() - piece.getIndex());
+
+                    if (lastDelta != -1 && lastDelta == delta)
+                        return true;
+
+                    lastPiece = piece;
+                    lastDelta = delta;
+                }
+            }
+        }
+
+        return false;
     }
 }
