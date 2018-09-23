@@ -39,7 +39,7 @@ public class GameBoard {
 
         weWon |= GetWinRow(0, 3, 6, pieceType);
         weWon |= GetWinRow(1, 4, 7, pieceType);
-        weWon |= GetWinRow(2, 7, 8, pieceType);
+        weWon |= GetWinRow(2, 5, 8, pieceType);
 
         weWon |= GetWinRow(0, 4, 8, pieceType);
         weWon |= GetWinRow(2, 4, 6, pieceType);
@@ -76,6 +76,17 @@ public class GameBoard {
         }
 
         return false;*/
+    }
+
+    public boolean IsBoardFilled() {
+        boolean boardFilled = true;
+
+        for (GamePiece piece : _pieces) {
+            if (piece.getOwner() == null)
+                boardFilled = false;
+        }
+
+        return boardFilled;
     }
 
     public int checkScore(GamePieceType pieceType, int depth) {

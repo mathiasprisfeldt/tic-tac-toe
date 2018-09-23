@@ -9,4 +9,5 @@
     <string name="game_status_action_place">Place</string>
     <string name="game_status_action_remove">Remove</string>
     <string name="game_status_winning">%1$s WON!</string>
+    <string name="game_draw_text">It\'s a draw!</string>
 </resources>

@@ -49,17 +49,22 @@ public class Player {
     }
 
     public void SetPiece(GamePiece piece) {
+        if (_context.GetIsGameover())
+            return;
+
         Player owner = piece.getOwner();
 
-        if (_context.GetIsAiGame())
-            _pieceAmount = 0;
+        boolean canAdd = _pieceAmount < 3;
 
-        if (_pieceAmount < 3 && owner == null) {
+        if (_context.GetIsAiGame())
+            canAdd = true;
+
+        if (canAdd && owner == null) {
             piece.SetOwner(this);
             _pieceAmount++;
             _context.EndTurn(false);
         }
-        else if (_pieceAmount >= 3 && owner == this) {
+        else if (!canAdd && owner == this) {
             piece.SetOwner(null);
             _pieceAmount--;
             _context.EndTurn(true);

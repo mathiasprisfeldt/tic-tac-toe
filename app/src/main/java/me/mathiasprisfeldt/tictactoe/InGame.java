@@ -13,6 +13,7 @@ import me.mathiasprisfeldt.tictactoe.GamePiece.GamePieceType;
 public class InGame extends AppCompatActivity {
 
     private boolean _isAiGame;
+    private boolean _isGameover;
 
     private GameBoard _board;
     private GridView _grid;
@@ -21,6 +22,10 @@ public class InGame extends AppCompatActivity {
     private Player _ply1;
     private Player _ply2;
     private Player _currentPlayer;
+
+    public boolean GetIsGameover() {
+        return _isGameover;
+    }
 
     public boolean GetIsAiGame() {
         return _isAiGame;
@@ -90,6 +95,8 @@ public class InGame extends AppCompatActivity {
         SetPlayer(_ply1);
 
         _grid.setBackgroundResource(R.drawable.ic_game_board);
+
+        _isGameover = false;
     }
 
     private void SetPlayer(Player ply) {
@@ -118,9 +125,14 @@ public class InGame extends AppCompatActivity {
                     R.drawable.ic_game_board_circle :
                     R.drawable.ic_game_board_cross);
 
-            if (_board.CheckWinCon(_currentPlayer.getPieceType()))
+            if (_board.IsBoardFilled()) {
+                _statusText.setText(R.string.game_draw_text);
+                _grid.setBackgroundResource(R.drawable.ic_game_board);
+                _isGameover = true;
+            } else if (_board.CheckWinCon(_currentPlayer.getPieceType())) {
                 _statusText.setText(getString(R.string.game_status_winning, _currentPlayer.toString()));
-            else
+                _isGameover = true;
+            } else
                 SetPlayer(_currentPlayer == _ply1 ? _ply2 : _ply1);
         }
     }
