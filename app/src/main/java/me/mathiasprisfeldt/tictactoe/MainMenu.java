@@ -18,17 +18,8 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-
-        //TODO: Use switch to actually choose gamemode.
-/*
-        switch (v.getId()) {
-            case R.id.against_ai:
-                break;
-            case R.id.against_player:
-                break;
-        }
-*/
-
-        startActivity(new Intent(this, InGame.class));
+        Intent newIntent = new Intent(this, InGame.class);
+        newIntent.putExtra("isAi", v.getId() == R.id.against_ai);
+        startActivity(newIntent);
     }
 }

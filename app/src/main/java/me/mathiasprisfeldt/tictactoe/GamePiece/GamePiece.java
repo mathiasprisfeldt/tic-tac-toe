@@ -5,7 +5,6 @@ import android.widget.ImageButton;
 
 import me.mathiasprisfeldt.tictactoe.InGame;
 import me.mathiasprisfeldt.tictactoe.Player;
-import me.mathiasprisfeldt.tictactoe.R;
 
 public class GamePiece {
 
@@ -23,9 +22,22 @@ public class GamePiece {
         return _owner;
     }
 
+    public GamePieceType getGamePieceType() {
+        if (_owner != null)
+            return _owner.getPieceType();
+
+        return GamePieceType.None;
+    }
+
     public GamePiece(InGame context, int index) {
         _context = context;
         _index = index;
+    }
+
+    public GamePiece(InGame context, int index, Player owner) {
+        _context = context;
+        _index = index;
+        _owner = owner;
     }
 
     public void UpdateBtn(ImageButton imageBtn) {
@@ -41,7 +53,10 @@ public class GamePiece {
     private final View.OnClickListener OnClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _context.GetCurrentPlayer().SetPiece(GamePiece.this);
+            Player player = _context.GetCurrentPlayer();
+
+            if (!player.getIsAi())
+                player.SetPiece(GamePiece.this);
         }
     };
 
@@ -56,6 +71,11 @@ public class GamePiece {
         }
         else
             _imageBtn.setImageResource(android.R.color.transparent);
+    }
+
+    @Override
+    public GamePiece clone() {
+        return new GamePiece(_context, _index, _owner);
     }
 
     public void Reset() {

@@ -17,8 +17,8 @@ public class GamePieceAdapter extends ArrayAdapter<GamePiece> {
 
     private final Context _context;
 
-    public GamePieceAdapter(@NonNull Context context, @NonNull GamePiece[][] objects) {
-        super(context, 0, ArrayExtensions.Flatten(objects, 9));
+    public GamePieceAdapter(@NonNull Context context, @NonNull GamePiece[] gamePieces) {
+        super(context, 0, gamePieces);
         _context = context;
     }
 

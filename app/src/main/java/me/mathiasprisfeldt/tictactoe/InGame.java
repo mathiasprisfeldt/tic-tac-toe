@@ -1,21 +1,20 @@
 package me.mathiasprisfeldt.tictactoe;
 
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import me.mathiasprisfeldt.tictactoe.GamePiece.GamePiece;
 import me.mathiasprisfeldt.tictactoe.GamePiece.GamePieceAdapter;
 import me.mathiasprisfeldt.tictactoe.GamePiece.GamePieceType;
 
 public class InGame extends AppCompatActivity {
 
+    private boolean _isAiGame;
+
+    private GameBoard _board;
     private GridView _grid;
     private TextView _statusText;
 
@@ -23,7 +22,16 @@ public class InGame extends AppCompatActivity {
     private Player _ply2;
     private Player _currentPlayer;
 
-    private GamePiece[][] _gamePieces = new GamePiece[3][3];
+    public boolean GetIsAiGame() {
+        return _isAiGame;
+    }
+
+    public Player GetOtherPlayer(Player ply) {
+        if (ply == _ply1)
+            return _ply2;
+        else
+            return _ply1;
+    }
 
     public Player GetCurrentPlayer() {
         return _currentPlayer;
@@ -34,8 +42,11 @@ public class InGame extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_in_game);
 
-        InitializeGamePieces();
-        GamePieceAdapter gamePieceAdapter = new GamePieceAdapter(this, _gamePieces);
+        Intent intent = getIntent();
+
+        _board = new GameBoard(this);
+
+        GamePieceAdapter gamePieceAdapter = new GamePieceAdapter(this, _board.getPieces());
 
         _grid = findViewById(R.id.game_grid);
         _grid.setAdapter(gamePieceAdapter);
@@ -56,29 +67,22 @@ public class InGame extends AppCompatActivity {
 
         _statusText = findViewById(R.id.game_status);
 
-        if (_ply1 == null)
-            _ply1 = new Player(getString(R.string.player_1), this, GamePieceType.Cross);
+        if (_ply1 == null) {
+            _ply1 = new Player(false, getString(R.string.player_1), this, GamePieceType.Cross);
+            _isAiGame = false;
+        }
 
-        if (_ply2 == null)
-            _ply2 = new Player(getString(R.string.player_2), this, GamePieceType.Circle);
+        if (_ply2 == null) {
+            boolean isAiGame = intent.getBooleanExtra("isAi", false);
+            _ply2 = new Player(isAiGame, getString(R.string.player_2), this, GamePieceType.Circle);
+            _isAiGame = isAiGame;
+        }
 
         ResetGame();
     }
 
-    private void InitializeGamePieces() {
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 3; x++) {
-                _gamePieces[y][x] = new GamePiece(this, x + (y * 3));
-            }
-        }
-    }
-
     private void ResetGame() {
-        for (GamePiece[] rowPieces : _gamePieces) {
-            for (GamePiece piece : rowPieces) {
-                piece.Reset();
-            }
-        }
+        _board.Reset();
 
         _ply1.Reset();
         _ply2.Reset();
@@ -90,7 +94,6 @@ public class InGame extends AppCompatActivity {
 
     private void SetPlayer(Player ply) {
         _currentPlayer = ply;
-
 
         String plyName = ply.toString();
 
@@ -104,6 +107,7 @@ public class InGame extends AppCompatActivity {
 
         _statusText.setText(String.format("%s - %s %s", plyName, action, piece));
 
+        _currentPlayer.YourTurn(_board);
     }
 
     public void EndTurn(boolean removedPiece) {
@@ -114,36 +118,10 @@ public class InGame extends AppCompatActivity {
                     R.drawable.ic_game_board_circle :
                     R.drawable.ic_game_board_cross);
 
-            if (CheckWinCon(_currentPlayer))
+            if (_board.CheckWinCon(_currentPlayer.getPieceType()))
                 _statusText.setText(getString(R.string.game_status_winning, _currentPlayer.toString()));
             else
                 SetPlayer(_currentPlayer == _ply1 ? _ply2 : _ply1);
         }
-    }
-
-    public boolean CheckWinCon(Player player) {
-        GamePiece lastPiece = null;
-        int lastDelta = -1;
-
-        for (int y = 0; y < _gamePieces.length; y++) {
-            for (int x = 0; x < 3; x++) {
-                GamePiece piece = _gamePieces[x][y];
-
-                if (piece.getOwner() == player) {
-                    int delta = -1;
-
-                    if (lastPiece != null)
-                        delta = Math.abs(lastPiece.getIndex() - piece.getIndex());
-
-                    if (lastDelta != -1 && lastDelta == delta)
-                        return true;
-
-                    lastPiece = piece;
-                    lastDelta = delta;
-                }
-            }
-        }
-
-        return false;
     }
 }
