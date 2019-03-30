@@ -12,6 +12,7 @@ import me.mathiasprisfeldt.tictactoe.GamePiece.GamePieceType;
 
 public class InGame extends AppCompatActivity {
 
+    private int _gamemode;
     private boolean _isAiGame;
     private boolean _isGameover;
 
@@ -22,6 +23,10 @@ public class InGame extends AppCompatActivity {
     private Player _ply1;
     private Player _ply2;
     private Player _currentPlayer;
+
+    public int GetGamemode() {
+        return _gamemode;
+    }
 
     public boolean GetIsGameover() {
         return _isGameover;
@@ -72,15 +77,18 @@ public class InGame extends AppCompatActivity {
 
         _statusText = findViewById(R.id.game_status);
 
+        _gamemode = intent.getIntExtra("gamemode", R.id.against_player);
+
         if (_ply1 == null) {
             _ply1 = new Player(false, getString(R.string.player_1), this, GamePieceType.Cross);
             _isAiGame = false;
         }
 
         if (_ply2 == null) {
-            boolean isAiGame = intent.getBooleanExtra("isAi", false);
-            _ply2 = new Player(isAiGame, getString(R.string.player_2), this, GamePieceType.Circle);
-            _isAiGame = isAiGame;
+
+            boolean isAi = _gamemode != R.id.against_player;
+            _ply2 = new Player(isAi, getString(R.string.player_2), this, GamePieceType.Circle);
+            _isAiGame = isAi;
         }
 
         ResetGame();

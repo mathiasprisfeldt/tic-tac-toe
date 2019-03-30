@@ -12,14 +12,15 @@ public class MainMenu extends AppCompatActivity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        findViewById(R.id.against_ai).setOnClickListener(this);
         findViewById(R.id.against_player).setOnClickListener(this);
+        findViewById(R.id.against_ai).setOnClickListener(this);
+        findViewById(R.id.against_ai_real).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         Intent newIntent = new Intent(this, InGame.class);
-        newIntent.putExtra("isAi", v.getId() == R.id.against_ai);
+        newIntent.putExtra("gamemode", v.getId());
         startActivity(newIntent);
     }
 }

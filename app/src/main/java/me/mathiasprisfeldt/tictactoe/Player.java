@@ -16,7 +16,6 @@ public class Player {
     private InGame _context;
     private GamePieceType _pieceType;
     private int _pieceAmount;
-    private int _move;
 
     public boolean getIsAi() {
         return _isAi;
@@ -48,7 +47,7 @@ public class Player {
         _pieceType = pieceType;
     }
 
-    public void SetPiece(GamePiece piece) {
+    public void SetPiece(GamePiece piece, boolean endTurn) {
         if (_context.GetIsGameover())
             return;
 
@@ -56,19 +55,27 @@ public class Player {
 
         boolean canAdd = _pieceAmount < 3;
 
-        if (_context.GetIsAiGame())
+        if (_context.GetGamemode() == R.id.against_ai)
             canAdd = true;
 
         if (canAdd && owner == null) {
             piece.SetOwner(this);
             _pieceAmount++;
-            _context.EndTurn(false);
+
+            if (endTurn)
+                _context.EndTurn(false);
         }
         else if (!canAdd && owner == this) {
             piece.SetOwner(null);
             _pieceAmount--;
-            _context.EndTurn(true);
+
+            if (endTurn)
+                _context.EndTurn(true);
         }
+    }
+
+    public void SetPiece(GamePiece piece) {
+        SetPiece(piece, true);
     }
 
     public void SetPiece(GamePiece piece, GamePiece toReplace) {
@@ -80,62 +87,76 @@ public class Player {
         if (!_isAi)
             return;
 
-        miniMax(gameBoard, this, 0);
+        PlayerMove move = miniMax(gameBoard, this, 0, Integer.MAX_VALUE);
 
-        SetPiece(gameBoard.getPieces()[_move]);
+        if (move.toRemove != -1)
+            SetPiece(gameBoard.getPieces()[move.toRemove], false);
+
+        SetPiece(gameBoard.getPieces()[move.move]);
     }
 
-    public int miniMax(GameBoard board,  Player currPly, int depth) {
-
+    public PlayerMove miniMax(GameBoard board,  Player currPly, int depth, int maxDepth) {
         GameBoard clone = board.clone();
 
         int ourScore = clone.checkScore(this, depth);
         if (ourScore != 0)
-            return ourScore;
+            return new PlayerMove(ourScore);
 
-        boolean allFilled = true;
-        for (GamePiece gamePiece : clone.getPieces()) {
-            if (gamePiece.getOwner() == null)
-                allFilled = false;
-        }
-        if (allFilled)
-            return 0;
+        if (clone.IsBoardFilled())
+            return new PlayerMove(0);
 
         GamePiece[] pieces = clone.getPieces();
-
-        ArrayList<Integer> moves = new ArrayList<>();
-        ArrayList<Integer> scores = new ArrayList<>();
+        ArrayList<PlayerMove> moves = new ArrayList<>();
 
         Player otherPlayer = _context.GetOtherPlayer(currPly);
 
-        for (int i = 0; i < pieces.length; i++) {
-            if (pieces[i].getOwner() == null) {
-                scores.add(miniMax(makeMove(clone, i, currPly), otherPlayer, depth + 1));
-                moves.add(i);
+        int pieceAmount = currPly.getPieceAmount();
+
+        if (_context.GetGamemode() == R.id.against_ai)
+            pieceAmount = 0;
+
+        if (pieceAmount < 3) {
+            for (int i = 0; i < pieces.length; i++) {
+                if (pieces[i].getOwner() == null) {
+                    PlayerMove newMove = miniMax(makeMove(clone, i, currPly), otherPlayer, depth + 1, Integer.MAX_VALUE);
+                    newMove.move = i;
+                    moves.add(newMove);
+                }
+            }
+        } else if (depth < maxDepth) {
+            for (int ourPiece = 0; ourPiece < pieces.length; ourPiece++) {
+
+                if (pieces[ourPiece].getOwner() != currPly)
+                    continue;
+
+                for (int newPiece = 0; newPiece < pieces.length; newPiece++) {
+                    if (pieces[newPiece].getOwner() == null) {
+                        GameBoard makeMove = makeMove(clone, newPiece, currPly);
+                        makeMove.getPieces()[ourPiece].SetOwner(null);
+                        PlayerMove newMove = miniMax(makeMove, otherPlayer, depth + 1, maxDepth == Integer.MAX_VALUE ? depth + 2 : depth + 1);
+
+                        newMove.move = newPiece;
+                        newMove.toRemove = ourPiece;
+                        moves.add(newMove);
+                    }
+                }
             }
         }
 
-        int bestScore = currPly.getIsAi() ? -10000 : 10000;
+        PlayerMove move = new PlayerMove(0);
 
-        for (int i = 0; i < scores.size(); i++) {
-            Integer score = scores.get(i);
-
+        if (moves.size() > 0) {
             if (currPly.getIsAi()) {
-                if (score > bestScore) {
-                    bestScore = score;
-                    _move = moves.get(i);
-                }
+                move = Collections.max(moves);
             } else {
-                if (score < bestScore) {
-                    bestScore = score;
-                    _move = moves.get(i);
-
-                }
+                move = Collections.min(moves);
             }
-
         }
 
-        return bestScore;
+        if (pieceAmount < 3)
+            move.toRemove = -1;
+
+        return move;
     }
 
     public GameBoard makeMove(GameBoard board, int move, Player ply) {
@@ -151,5 +172,31 @@ public class Player {
     @Override
     public String toString() {
         return _name;
+    }
+
+    private class PlayerMove implements Comparable<PlayerMove> {
+        public int score;
+        public int move = -1;
+        public int toRemove = -1;
+
+        public PlayerMove(int score, int move, int toRemove) {
+            this.score = score;
+            this.move = move;
+            this.toRemove = toRemove;
+        }
+
+        public PlayerMove(int score, int move) {
+            this.score = score;
+            this.move = move;
+        }
+
+        public PlayerMove(int score) {
+            this.score = score;
+        }
+
+        @Override
+        public int compareTo(@NonNull PlayerMove o) {
+            return Integer.compare(score, o.score);
+        }
     }
 }

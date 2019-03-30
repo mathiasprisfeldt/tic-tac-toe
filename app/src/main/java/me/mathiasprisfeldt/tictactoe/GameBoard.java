@@ -46,6 +46,7 @@ public class GameBoard {
 
         return weWon;
 
+        //TODO: Make the smart win con check work with 3 or more pieces
         /*GamePiece lastPiece = null;
         int lastDelta = -1;
 
